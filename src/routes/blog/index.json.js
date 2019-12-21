@@ -1,18 +1,11 @@
 import posts from './_posts.js'
+import respond from 'express-respond-simple'
 
-const contents = JSON.stringify(
-  posts.map(post => {
-    return {
-      title: post.title,
-      slug: post.slug
-    }
-  })
-)
+const { respond200 } = respond
 
-export function get(req, res) {
-  res.writeHead(200, {
-    'Content-Type': 'application/json'
-  })
+const contents = posts.map(post => ({
+  title: post.title,
+  slug: post.slug
+}))
 
-  res.end(contents)
-}
+export const get = respond200(contents)

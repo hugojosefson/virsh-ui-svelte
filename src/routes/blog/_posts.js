@@ -7,7 +7,7 @@
 // we don't want to create an `/blog/posts` route — the leading
 // underscore tells Sapper not to do that.
 
-const posts = [
+export default [
   {
     title: 'What is Sapper?',
     slug: 'what-is-sapper',
@@ -84,9 +84,3 @@ const posts = [
     `
   }
 ]
-
-posts.forEach(post => {
-  post.html = post.html.replace(/^\t{3}/gm, '')
-})
-
-export default posts
