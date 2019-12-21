@@ -1,30 +1,23 @@
+import toObject from 'to-object-reducer'
 import posts from './_posts.js'
 
-const lookup = new Map()
-posts.forEach(post => {
-  lookup.set(post.slug, JSON.stringify(post))
-})
+// prettier-ignore
+const lookup =
+  posts
+    .map(post => [post.slug, post])
+    .reduce(toObject, {})
 
 export function get(req, res, next) {
   // the `slug` parameter is available because
   // this file is called [slug].json.js
   const { slug } = req.params
 
-  if (lookup.has(slug)) {
-    res.writeHead(200, {
-      'Content-Type': 'application/json'
-    })
-
-    res.end(lookup.get(slug))
+  const post = lookup[slug]
+  if (post) {
+    res.json(post)
   } else {
-    res.writeHead(404, {
-      'Content-Type': 'application/json'
+    res.status(404).json({
+      message: 'Not found'
     })
-
-    res.end(
-      JSON.stringify({
-        message: 'Not found'
-      })
-    )
   }
 }

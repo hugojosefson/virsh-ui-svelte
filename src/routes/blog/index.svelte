@@ -1,10 +1,8 @@
 <script context="module">
-  export function preload({ params, query }) {
-    return this.fetch(`blog.json`)
-      .then(r => r.json())
-      .then(posts => {
-        return { posts }
-      })
+  export async function preload({ params, query }) {
+    const response = await this.fetch(`blog.json`)
+    const posts = await response.json()
+    return { posts }
   }
 </script>
 
