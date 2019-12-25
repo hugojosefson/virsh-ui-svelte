@@ -1,8 +1,8 @@
 {
-  "name": "@hugojosefson/sapper-template-rollup",
+  "name": "@hugojosefson/virsh-svelte-ui",
   "private": true,
-  "description": "My Sapper template fork, using Prettier.js for formatting, with most default linting rules from standard.js. Also, running Cypress via docker by default, instead of requiring it to be installed.",
-  "version": "0.0.1",
+  "description": "Single-purpose app for starting a virtual machine.",
+  "version": "0.1.0",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
