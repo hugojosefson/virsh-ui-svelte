@@ -1,5 +1,5 @@
 <script context="module">
-  export async function preload({ params: {slug} }) {
+  export async function preload({ params: { slug } }) {
     const res = await this.fetch(`blog/${slug}.json`)
     const data = await res.json()
 
