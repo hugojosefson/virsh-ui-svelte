@@ -1,6 +1,7 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "@hugojosefson/sapper-template-rollup",
+  "private": true,
+  "description": "My Sapper template fork, using Prettier.js for formatting, with most default linting rules from standard.js. Also, running Cypress via docker by default, instead of requiring it to be installed.",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
@@ -8,7 +9,7 @@
     "export": "sapper export --legacy",
     "start": "node __sapper__/build",
     "cypress": "docker run -i --net=host -v \"$(pwd)\":/e2e -w /e2e cypress/included:3.2.0",
-    "lint": "prettier --plugin-search-dir=. --write '**/*.{svelte,html,js,mjs}'",
+    "lint": "prettier --plugin-search-dir=. --write '**/*.{svelte,html,js,mjs,md}'",
     "test": "npm-run-all lint --parallel --race dev cypress"
   },
   "babel": {
