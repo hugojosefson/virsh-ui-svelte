@@ -6,8 +6,6 @@ import * as sapper from '@sapper/server'
 import initAppState from './app-state'
 import { getDomains } from './virsh'
 
-import { manifest } from '@sapper/internal/manifest-server'
-
 const checkDomainExists = () => (req, res, next) => {
   const domain = req.params.domain
   const data = req.appState.getData()
@@ -34,16 +32,4 @@ export default async ({ dev, trustProxy }) => {
     .use(populateReq({ appState }))
     .use('/api/domains/:domain/:command', checkDomainExists())
     .use(sapper.middleware())
-    .use((req, res, next) => {
-      const route = manifest.server_routes.find(route =>
-        route.pattern.test(req.path)
-      )
-      if (route) {
-        res.statusCode = 405
-        res.setHeader('Allow', Object.keys(route.handlers).join(', '))
-        res.end('Method Not Allowed')
-      } else {
-        next()
-      }
-    })
 }
