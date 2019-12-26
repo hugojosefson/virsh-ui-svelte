@@ -23,29 +23,28 @@ export const virsh = (...args) => {
     .then(taplog)
 }
 
-export const getUuids = () =>
+export const getIds = () =>
   virsh('list', '--all', '--uuid').then(stdout =>
     stdout.split('\n').filter(Boolean)
   )
 
-export const getUuid = domain =>
+export const getId = domain =>
   Promise.resolve(domain).then(d => virsh('domuuid', d))
 
 export const getName = domain =>
   Promise.resolve(domain).then(d => virsh('domname', d))
 
-export const getDomains = async (uuids = getUuids()) => {
-  const _uuids = await Promise.resolve(uuids)
-  const states = await Promise.all(_uuids.map(getState))
-  const names = await Promise.all(_uuids.map(getName))
-  return zipObj(
-    names,
-    zipWith(
-      (name, domain) => ({ name, ...domain }),
-      names,
-      zipWith((uuid, state) => ({ uuid, state }), _uuids, states)
-    )
+export const getDomains = async (ids = getIds()) => {
+  const _ids = await Promise.resolve(ids)
+  const states = await Promise.all(_ids.map(getState))
+  const names = await Promise.all(_ids.map(getName))
+  const addIdAndName = zipWith((id, name) => ({ id, name }), _ids, names)
+  const addStateToDomain = zipWith(
+    (domain, state) => ({ ...domain, state }),
+    addIdAndName,
+    states
   )
+  return zipObj(names, addStateToDomain)
 }
 
 export const getState = domain => virsh('domstate', domain)
