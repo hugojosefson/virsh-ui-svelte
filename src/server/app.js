@@ -19,16 +19,18 @@ const checkDomainExists = () => (req, res, next) => {
   }
 }
 
+const populateReq = props => (req, res, next) => {
+  Object.assign(req, props)
+  next()
+}
+
 export default async ({ dev }) => {
   const domains = await getDomains()
   const appState = initAppState({ domains })
   return express()
     .use(compression({ threshold: 0 }))
     .use(sirv('static', { dev }))
-    .use((req, res, next) => {
-      req.appState = appState
-      next()
-    })
+    .use(populateReq({ appState }))
     .use('/api/domains/:domain/:command', checkDomainExists())
     .use(sapper.middleware())
     .use((req, res, next) => {
