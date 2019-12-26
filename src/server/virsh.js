@@ -1,5 +1,5 @@
 import execa from 'execa'
-import { zipWith, zipObj } from 'ramda'
+import { zipObj, zipWith } from 'ramda'
 import s from '../fn/s'
 
 const taplog = stdout => {
@@ -38,13 +38,15 @@ export const getDomains = async (ids = getIds()) => {
   const _ids = await Promise.resolve(ids)
   const states = await Promise.all(_ids.map(getState))
   const names = await Promise.all(_ids.map(getName))
-  const addIdAndName = zipWith((id, name) => ({ id, name }), _ids, names)
-  const addStateToDomain = zipWith(
+
+  const domains = zipWith((id, name) => ({ id, name }), _ids, names)
+  const domainsWithState = zipWith(
     (domain, state) => ({ ...domain, state }),
-    addIdAndName,
+    domains,
     states
   )
-  return zipObj(names, addStateToDomain)
+
+  return zipObj(names, domainsWithState)
 }
 
 export const getState = domain => virsh('domstate', domain)
