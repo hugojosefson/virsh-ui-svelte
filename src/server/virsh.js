@@ -40,7 +40,11 @@ export const getDomains = async (uuids = getUuids()) => {
   const names = await Promise.all(_uuids.map(getName))
   return zipObj(
     names,
-    zipWith((uuid, state) => ({ uuid, state }), _uuids, states)
+    zipWith(
+      (name, domain) => ({ name, ...domain }),
+      names,
+      zipWith((uuid, state) => ({ uuid, state }), _uuids, states)
+    )
   )
 }
 
