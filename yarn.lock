@@ -2837,7 +2837,7 @@ safe-buffer@5.1.2, safe-buffer@~5.1.1:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sapper@^0.27.0:
+sapper@^0.27.12:
   version "0.27.12"
   resolved "https://registry.yarnpkg.com/sapper/-/sapper-0.27.12.tgz#7c72cd878ed4ca07f8b070ee952f66c2947f58c8"
   integrity sha512-xTvPQMb9L3J34Jd+6jSFeiuT8eQZ2D5TXPeJI9VO7h8t5nB2w78ZNQ4IlEPHsCMT2LZNLozygTb2plE4qH2XeQ==
@@ -3137,7 +3137,7 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-svelte@^3.0.0:
+svelte@^3.20.1:
   version "3.22.2"
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.22.2.tgz#06585244191bf7a112af2a0025610f33d77c3715"
   integrity sha512-DxumO0+vvHA6NSc2jtVty08I8lFI43q8P2zX6JxZL8J1kqK5NVjad6TRM/twhnWXC+QScnwkZ15O6X1aTsEKTA==

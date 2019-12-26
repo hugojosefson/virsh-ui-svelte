@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname ${0})"
+
+PORT="${PORT:-3000}"
+LIBVIRT_SOCK="${LIBVIRT_SOCK:-/var/run/libvirt/libvirt-sock}"
+
+docker run --rm -it \
+  -v "${LIBVIRT_SOCK}":"${LIBVIRT_SOCK}" \
+  -e PORT:"${PORT}" \
+  -p "${PORT}":"${PORT}" \
+  hugojosefson/virsh-svelte-ui:latest \
+  "$@"
