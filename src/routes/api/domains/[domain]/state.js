@@ -6,7 +6,6 @@ export const get = (req, res, next) => {
     },
     data: {
       type: 'domain',
-      id: domain.uuid,
       ...domain,
     },
   })
