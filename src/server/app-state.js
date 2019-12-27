@@ -4,7 +4,7 @@ import justReturn from '../fn/just-return'
 import id from '../fn/id'
 import s from '../fn/s'
 import { getEventLineStream, getDomains } from './virsh'
-import property from '../fn/property'
+import streamToGetter from '../fn/stream-to-getter'
 
 const EVENTLINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
 
@@ -46,11 +46,9 @@ export default async () => {
   const eventStream = lineStream.flatMap(lineToSingleEventStream)
 
   const dataStream = eventStream.scan(initialAppState, eventReducerOverAppState)
-  const dataProperty = property(initialAppState)(
-    dataStream.each.bind(dataStream)
-  )
+  const getData = streamToGetter(dataStream, initialAppState)
 
-  const getPath = path => rPath(path, dataProperty())
+  const getPath = path => rPath(path, getData())
 
   return {
     getPath,
