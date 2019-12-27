@@ -33,6 +33,6 @@ export default async () => {
   })
   return {
     getData: () => data,
-    getDomain: req => path(['domains', req.domain], data)
+    getDomain: domain => path(['domains', domain], data)
   }
 }
