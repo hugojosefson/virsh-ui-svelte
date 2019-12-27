@@ -37,10 +37,8 @@ const eventReducerOverAppState = (appState, event) =>
   eventToMutator(event)(appState)
 
 export default async () => {
-  console.log(`initAppState`)
   const domains = await getDomains()
   const initialAppState = { domains }
-  console.log(`initAppState: initialAppState = ${s(initialAppState)}`)
 
   const lineStream = getEventLineStream()
   const eventStream = lineStream.flatMap(lineToSingleEventStream)

@@ -2,27 +2,18 @@ import execa from 'execa'
 import { spawn } from 'node-pty'
 import _ from 'highland'
 import { zipObj, zipWith } from 'ramda'
-import s from '../fn/s'
 
-const taplog = stdout => {
-  console.log(stdout)
-  return stdout
-}
-
-export const virsh = (...args) => {
-  console.log(`\nExecuting virsh ${args.join(' ')}`)
-  return execa('virsh', args)
-    .then(
-      ({ stdout }) => stdout.trim(),
-      cause => {
-        console.error(s(cause))
-        return Promise.reject(
-          // Object.assign(new Error('Could not run virsh command.'), { cause })
-          new Error('Could not run virsh command.')
-        )
-      }
-    )
-    .then(taplog)
+export const virsh = async (...args) => {
+  try {
+    const result = await execa('virsh', args)
+    return result.stdout.trim()
+  } catch (cause) {
+    const error = Object.assign(new Error('Could not run virsh command.'), {
+      cause
+    })
+    console.error(error.stack)
+    throw error
+  }
 }
 
 export const getIds = () =>
@@ -57,5 +48,5 @@ export const getEventLineStream = () => {
 }
 
 export const getState = domain => virsh('domstate', domain)
-export const start = domain => virsh('start', domain)
+export const start = domain => virsh('starter', domain)
 export const shutdown = domain => virsh('shutdown', domain)
