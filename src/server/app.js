@@ -4,7 +4,6 @@ import compression from 'compression'
 import sirv from 'sirv'
 import * as sapper from '@sapper/server'
 import initAppState from './app-state'
-import { getDomains } from './virsh'
 
 const checkDomainExists = () => (req, res, next) => {
   const domain = req.params.domain
@@ -23,8 +22,7 @@ const populateReq = props => (req, res, next) => {
 }
 
 export default async ({ dev, trustProxy }) => {
-  const domains = await getDomains()
-  const appState = initAppState({ domains })
+  const appState = await initAppState()
   return express()
     .set('trust proxy', trustProxy)
     .use(compression({ threshold: 0 }))
