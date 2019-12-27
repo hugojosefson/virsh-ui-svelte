@@ -9,7 +9,7 @@ export const virsh = async (...args) => {
     return result.stdout.trim()
   } catch (cause) {
     const error = Object.assign(new Error('Could not run virsh command.'), {
-      cause
+      cause,
     })
     console.error(error.stack)
     throw error
@@ -20,9 +20,6 @@ export const getIds = () =>
   virsh('list', '--all', '--uuid').then(stdout =>
     stdout.split('\n').filter(Boolean)
   )
-
-export const getId = domain =>
-  Promise.resolve(domain).then(d => virsh('domuuid', d))
 
 export const getName = domain =>
   Promise.resolve(domain).then(d => virsh('domname', d))
@@ -43,7 +40,11 @@ export const getDomains = async (ids = getIds()) => {
 }
 
 export const getEventLineStream = () => {
-  const pty = spawn('virsh', ['event', '--loop', '--timestamp', '--all'])
+  const pty = spawn(
+    'virsh',
+    ['event', '--loop', '--timestamp', '--all'],
+    undefined
+  )
   return _(pty).split().compact()
 }
 
