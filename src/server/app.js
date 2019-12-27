@@ -1,14 +1,13 @@
-import { hasPath } from 'ramda'
 import express from 'express'
 import compression from 'compression'
 import sirv from 'sirv'
 import * as sapper from '@sapper/server'
 import initAppState from './app-state'
 
-const checkDomainExists = () => (req, res, next) => {
-  const domain = req.params.domain
-  const data = req.appState.getData()
-  if (hasPath(['domains', domain], data)) {
+const populateDomain = getPath => (req, res, next) => {
+  const domain = getPath(['domains', req.params.domain])
+
+  if (domain) {
     req.domain = domain
     next()
   } else {
@@ -22,12 +21,13 @@ const populateReq = props => (req, res, next) => {
 }
 
 export default async ({ dev }) => {
-  const appState = await initAppState()
+  const { getPath } = await initAppState()
 
   return express()
     .use(compression({ threshold: 0 }))
     .use(sirv('static', { dev }))
-    .use(populateReq({ appState }))
-    .use('/api/domains/:domain/:command', checkDomainExists())
+    .use('/api/**', populateReq({ getPath }))
+    .use('/api/domains/:domain', populateDomain(getPath))
+    .use('/api/domains/:domain/**', populateDomain(getPath))
     .use(sapper.middleware())
 }

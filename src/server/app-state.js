@@ -1,9 +1,22 @@
 import { compose, lensPath, path as rPath, set } from 'ramda'
+import _ from 'highland'
 import justReturn from '../fn/just-return'
 import id from '../fn/id'
-import { getDomains, getEventLineStream } from './virsh'
+import s from '../fn/s'
+import { getEventLineStream, getDomains } from './virsh'
+import property from '../fn/property'
 
 const EVENTLINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
+
+const lineToSingleEventStream = line => {
+  const matches = line.match(EVENTLINE_REGEX)
+  if (matches) {
+    const [, timestamp, type, domain, message] = matches
+    return _.of({ timestamp, type, domain, message })
+  } else {
+    return _([])
+  }
+}
 
 const mutatorFactories = {
   lifecycle: event => {
@@ -18,26 +31,28 @@ const mutatorFactories = {
 
 const mutatorFactoryFor = type => mutatorFactories[type] || justReturn(id)
 
-const parseEventReducer = (appState, line) => {
-  const [, timestamp, type, domain, message] = line.match(EVENTLINE_REGEX)
-  const event = { timestamp, type, domain, message }
-  const mutatorFactory = mutatorFactoryFor(type)
-  const mutator = mutatorFactory(event)
+const eventToMutator = event => mutatorFactoryFor(event.type)(event)
 
-  return mutator(appState)
-}
+const eventReducerOverAppState = (appState, event) =>
+  eventToMutator(event)(appState)
 
 export default async () => {
-  let data = { domains: await getDomains() }
-  getEventLineStream().each(line => {
-    data = parseEventReducer(data, line)
-  })
-  const getData = () => data
-  const getPath = path => rPath(path, data)
-  const getDomain = domain => getPath(['domains', domain])
+  console.log(`initAppState`)
+  const domains = await getDomains()
+  const initialAppState = { domains }
+  console.log(`initAppState: initialAppState = ${s(initialAppState)}`)
+
+  const lineStream = getEventLineStream()
+  const eventStream = lineStream.flatMap(lineToSingleEventStream)
+
+  const dataStream = eventStream.scan(initialAppState, eventReducerOverAppState)
+  const dataProperty = property(initialAppState)(
+    dataStream.each.bind(dataStream)
+  )
+
+  const getPath = path => rPath(path, dataProperty())
+
   return {
-    getData,
-    getPath,
-    getDomain
+    getPath
   }
 }
