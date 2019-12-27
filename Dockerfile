@@ -32,4 +32,5 @@ COPY package.json yarn.lock /app/
 RUN yarn --production
 COPY static /app/static
 COPY --from=builder /app/__sapper__/build/ /app/__sapper__/build/
+ENV NODE_ENV production
 CMD node __sapper__/build
