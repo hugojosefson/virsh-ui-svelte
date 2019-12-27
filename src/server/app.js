@@ -1,24 +1,11 @@
+import errorHandler from '../middleware/error-handler'
 import express from 'express'
 import compression from 'compression'
 import sirv from 'sirv'
 import * as sapper from '@sapper/server'
 import initAppState from './app-state'
-
-const populateDomain = getPath => (req, res, next) => {
-  const domain = getPath(['domains', req.params.domain])
-
-  if (domain) {
-    req.domain = domain
-    next()
-  } else {
-    res.status(404).send()
-  }
-}
-
-const populateReq = props => (req, res, next) => {
-  Object.assign(req, props)
-  next()
-}
+import populateDomain from '../middleware/populate-domain'
+import populateReq from '../middleware/populate-req'
 
 export default async ({ dev }) => {
   const { getPath } = await initAppState()
@@ -28,6 +15,6 @@ export default async ({ dev }) => {
     .use(sirv('static', { dev }))
     .use('/api/**', populateReq({ getPath }))
     .use('/api/domains/:domain', populateDomain(getPath))
-    .use('/api/domains/:domain/**', populateDomain(getPath))
+    .use(errorHandler({ dev }))
     .use(sapper.middleware())
 }

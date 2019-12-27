@@ -1,15 +1,13 @@
-import { compose, lensPath, path as rPath, set } from 'ramda'
+import { always, compose, lensPath, path as rPath, set } from 'ramda'
 import _ from 'highland'
-import justReturn from '../fn/just-return'
 import id from '../fn/id'
-import s from '../fn/s'
 import { getEventLineStream, getDomains } from './virsh'
 import streamToGetter from '../fn/stream-to-getter'
 
-const EVENTLINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
+const EVENT_LINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
 
 const lineToSingleEventStream = line => {
-  const matches = line.match(EVENTLINE_REGEX)
+  const matches = line.match(EVENT_LINE_REGEX)
   if (matches) {
     const [, timestamp, type, domain, message] = matches
     return _.of({ timestamp, type, domain, message })
@@ -29,7 +27,7 @@ const mutatorFactories = {
   }
 }
 
-const mutatorFactoryFor = type => mutatorFactories[type] || justReturn(id)
+const mutatorFactoryFor = type => mutatorFactories[type] || always(id)
 
 const eventToMutator = event => mutatorFactoryFor(event.type)(event)
 
