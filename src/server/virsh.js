@@ -17,9 +17,9 @@ export const virsh = async (...args) => {
 }
 
 export const getIds = () =>
-  virsh('list', '--all', '--uuid').then(stdout =>
-    stdout.split('\n').filter(Boolean)
-  )
+  virsh('list', '--all', '--uuid')
+    .then(stdout => stdout.split('\n'))
+    .then(lines => lines.filter(Boolean))
 
 export const getName = domain =>
   Promise.resolve(domain).then(d => virsh('domname', d))
