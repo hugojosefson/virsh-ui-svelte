@@ -1,6 +1,7 @@
 import { lensPath, path, set } from 'ramda'
 import justReturn from '../fn/just-return'
 import id from '../fn/id'
+import { getDomains, getEventLineStream } from './virsh'
 
 const EVENTLINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
 
@@ -25,14 +26,13 @@ const parseEventReducer = (appState, line) => {
   return mutator(appState)
 }
 
-export default (initialState = {}) => {
-  let data = { ...initialState }
+export default async () => {
+  let data = { domains: await getDomains() }
+  getEventLineStream().each(line => {
+    data = parseEventReducer(data, line)
+  })
   return {
     getData: () => data,
-    reduceEvents: (...events) => {
-      data = events.reduce(parseEventReducer, data)
-      return data
-    },
     getDomain: req => path(['domains', req.domain], data)
   }
 }

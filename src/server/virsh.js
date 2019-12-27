@@ -1,4 +1,6 @@
 import execa from 'execa'
+import { spawn } from 'node-pty'
+import _ from 'highland'
 import { zipObj, zipWith } from 'ramda'
 import s from '../fn/s'
 
@@ -47,6 +49,13 @@ export const getDomains = async (ids = getIds()) => {
   )
 
   return zipObj(names, domainsWithState)
+}
+
+export const getEventLineStream = () => {
+  const pty = spawn('virsh', ['event', '--loop', '--timestamp', '--all'])
+  return _(pty)
+    .split()
+    .compact()
 }
 
 export const getState = domain => virsh('domstate', domain)
