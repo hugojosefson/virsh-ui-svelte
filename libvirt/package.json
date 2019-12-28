@@ -1,0 +1,12 @@
+{
+  "name": "libvirt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "parse.mjs",
+  "license": "MIT",
+  "scripts": {
+    "start": "node --es-module-specifier-resolution=node --experimental-modules ."
+  },
+  "dependencies": {}
+}
