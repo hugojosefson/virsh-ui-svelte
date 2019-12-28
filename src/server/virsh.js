@@ -70,4 +70,4 @@ export const getEventLineStream = () => {
 
 export const getState = domain => virsh('domstate', domain)
 export const start = domain => virsh('start', domain)
-export const shutdown = domain => virsh('shutdown', domain)
+export const shutdown = domain => virsh('shutdown', domain, '--mode', 'acpi')
