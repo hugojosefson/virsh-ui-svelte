@@ -3,17 +3,23 @@ import { shutdown } from '../../../../server/virsh'
 import s from '../../../../fn/s'
 
 export const post = wrapInErrorHandler((req, res, next) => {
-  shutdown(req.domain.name).then(
+  shutdown(req.domain.id).then(
     message =>
       res
         .status(202)
-        .type('json')
+        .type('application/vnd.api+json')
         .send(
           s({
             jsonapi: {
               version: '1.0',
             },
-            data: { message },
+            data: {
+              type: 'message',
+              id: message,
+            },
+            links: {
+              self: `${req.protocol}://${req.headers.host}/api/domains/${req.domain.id}/shutdown`,
+            },
           })
         ),
     next

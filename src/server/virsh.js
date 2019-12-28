@@ -56,7 +56,7 @@ export const getDomains = async (ids = getIds()) => {
     states
   )
 
-  return zipObj(names, domainsWithNameAndState)
+  return zipObj(_ids, domainsWithNameAndState)
 }
 
 export const getEventLineStream = () => {
