@@ -6,12 +6,16 @@ import allowMethods from 'allow-methods'
 const toUpperCase = s => s.toUpperCase()
 const isHttpMethod = method => http.METHODS.includes(method)
 
-const sapperCors = options => (req, res, next) => {
-  if (!req.declaredRoute) {
+const sapperCors = ({ reqProp = 'sapperRoute', corsOptions }) => (
+  req,
+  res,
+  next
+) => {
+  if (!req[reqProp]) {
     return next()
   }
 
-  const { handlers } = req.declaredRoute
+  const { handlers } = req[reqProp]
   const declaredMethods = Object.keys(handlers).map(toUpperCase)
   const isOptionsDeclared = declaredMethods.includes('OPTIONS')
 
@@ -26,7 +30,7 @@ const sapperCors = options => (req, res, next) => {
   ].filter(isHttpMethod)
 
   const handleThisRequest = compose(
-    cors({ ...options, methods }),
+    cors({ ...corsOptions, methods }),
     allowMethods(methods)
   )
   handleThisRequest(req, res, next)
