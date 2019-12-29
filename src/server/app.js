@@ -1,13 +1,15 @@
-import errorHandler from '../middleware/error-handler'
 import express from 'express'
 import compression from 'compression'
 import sirv from 'sirv'
 import * as sapper from '@sapper/server'
+import { manifest } from '@sapper/internal/manifest-server'
+
 import initAppState from './app-state'
-import populateDomain from '../middleware/populate-domain'
 import populateReq from '../middleware/populate-req'
-import onlyDeclaredRoutes from '../middleware/_only-declared-routes'
+import populateDomain from '../middleware/populate-domain'
+import populateDeclaredRoute from '../middleware/populate-declared-route'
 import sapperCors from '../middleware/sapper-cors'
+import errorHandler from '../middleware/error-handler'
 
 export default async ({ dev }) => {
   const { getPath } = await initAppState()
@@ -15,7 +17,8 @@ export default async ({ dev }) => {
   return express()
     .use(compression({ threshold: 0 }))
     .use(sirv('static', { dev }))
-    .use(onlyDeclaredRoutes(sapperCors({ origin: true })))
+    .use(populateDeclaredRoute(manifest))
+    .use(sapperCors({ origin: true }))
     .use('/api/**', populateReq({ getPath }))
     .use('/api/domains/:domain', populateDomain(getPath))
     .use(errorHandler({ dev }))

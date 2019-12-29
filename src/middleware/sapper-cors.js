@@ -3,14 +3,15 @@ import { compose } from 'compose-middleware'
 import cors from 'cors'
 import allowMethods from 'allow-methods'
 
-import { declaredRoute } from './_only-declared-routes'
-
 const toUpperCase = s => s.toUpperCase()
-const allMethods = http.METHODS
-const isHttpMethod = method => allMethods.includes(method)
+const isHttpMethod = method => http.METHODS.includes(method)
 
 const sapperCors = options => (req, res, next) => {
-  const { handlers } = declaredRoute(req)
+  if (!req.declaredRoute) {
+    return next()
+  }
+
+  const { handlers } = req.declaredRoute
   const declaredMethods = Object.keys(handlers).map(toUpperCase)
   const isOptionsDeclared = declaredMethods.includes('OPTIONS')
 
