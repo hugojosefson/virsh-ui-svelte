@@ -10,19 +10,25 @@
 </script>
 
 <script>
+  import ReconnectingWebSocket from 'reconnecting-websocket'
   import { onMount } from 'svelte'
   import { arrayifyCollection } from '../../fn/normalize-response'
-  import createReload from '../../fn/create-reload'
 
   export let _domains
   let domains
   $: domains = arrayifyCollection(_domains)
 
-  onMount(
-    createReload(preload, [], preloaded => {
-      _domains = preloaded._domains
+  onMount(() => {
+    const ws = new ReconnectingWebSocket(
+      window.location.origin.replace(/^http/, 'ws') + '/api/domains'
+    )
+    ws.addEventListener('message', async event => {
+      _domains = await Promise.resolve(event.data)
+        .then(JSON.parse)
+        .then(normalize(fetch))
     })
-  )
+    return () => ws.close()
+  })
 </script>
 
 <a href="/">&lt;-- back</a>

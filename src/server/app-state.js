@@ -66,10 +66,12 @@ export default async () => {
     appStateStreamStream.write(_(promise))
   })
 
-  const getAppState = streamToGetter(appStateStream, initialAppState)
+  const getAppState = streamToGetter(appStateStream.fork(), initialAppState)
   const getPath = path => rPath(path, getAppState())
+  const getAppStateStream = () => appStateStream.fork()
 
   return {
+    getAppStateStream,
     getPath
   }
 }
