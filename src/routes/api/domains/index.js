@@ -7,7 +7,7 @@ export const get = wrapInErrorHandler((req, res, next) => {
   res.type('application/hal+json').send(
     s({
       _links: { self: selfLink(req) },
-      domains: Object.values(req.getPath(['domains'])).map(domain =>
+      _collection: Object.values(req.getPath(['domains'])).map(domain =>
         renderDomain({ ...req, protocol: req.protocol, domain })
       ),
     })
