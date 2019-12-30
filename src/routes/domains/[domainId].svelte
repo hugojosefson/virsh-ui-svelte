@@ -24,7 +24,11 @@
 
   const reload = async () => {
     domain = (await preload({ params: { domainId } })).domain
+    setTimeout(reload, 1000)
   }
+
+  setTimeout(reload, 1000)
+
 </script>
 
 <a href="/domains">&lt;-- back</a>
@@ -34,8 +38,6 @@
 <h2>State</h2>
 
 <p>
-
-<button on:click={reload}>reload</button>
 
 Domain {domain.name || domain.id} is
 {#if domain.stateReason && domain.stateReason !== 'unknown'}
