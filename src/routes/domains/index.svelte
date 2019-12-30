@@ -14,10 +14,10 @@
 <h1>/domains</h1>
 
 <ul>
-  {#each domains.data as domain}
+  {#each domains.domains as domain}
     <li>
-      [ {domain.attributes.state} ] &nbsp;
-      <a href={`/domains/${domain.id}`}>{domain.attributes.name}</a>
+      [ {domain.state} ] &nbsp;
+      <a href={`/domains/${domain.id}`}>{domain.name}</a>
     </li>
   {/each}
 </ul>

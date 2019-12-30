@@ -26,7 +26,7 @@ const sapperCors = ({ routeProp = 'sapperRoute', corsOptions }) => (
 
   const methods = [
     ...declaredMethods,
-    ...(isOptionsDeclared ? [] : ['OPTIONS'])
+    ...(isOptionsDeclared ? [] : ['OPTIONS']),
   ].filter(isHttpMethod)
 
   const handleThisRequest = compose(
