@@ -1,9 +1,9 @@
-export default ({ manifest, reqProp = 'sapperRoute' }) => (
+export default ({ manifest, routeProp = 'sapperRoute' }) => (
   req,
   res,
   next
 ) => {
-  req[reqProp] = manifest.server_routes.find(route =>
+  req[routeProp] = manifest.server_routes.find(route =>
     route.pattern.test(req.url)
   )
   next()
