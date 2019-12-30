@@ -14,11 +14,17 @@
 
 <script>
   export let domain
+  let domainId
+  $: domainId = domain.id
 
   const perform = action => () =>
     fetch(action.href, { method: action.method }).then(response =>
       console.log(response)
     )
+
+  const reload = async () => {
+    domain = (await preload({ params: { domainId } })).domain
+  }
 </script>
 
 <a href="/domains">&lt;-- back</a>
@@ -26,10 +32,16 @@
 <h1>/domains/{domain.name}</h1>
 
 <h2>State</h2>
+
+<p>
+
+<button on:click={reload}>reload</button>
+
 Domain {domain.name || domain.id} is
 {#if domain.stateReason && domain.stateReason !== 'unknown'}
   {domain.state}, because {domain.stateReason}.
 {:else}{domain.state}.{/if}
+</p>
 
 <h2>Actions</h2>
 
