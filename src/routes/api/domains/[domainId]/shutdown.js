@@ -1,25 +1,21 @@
 import wrapInErrorHandler from '../../../_wrap-in-error-handler'
 import { shutdown } from '../../../../server/virsh'
 import s from '../../../../fn/s'
+import { selfLink } from '.'
 
 export const post = wrapInErrorHandler((req, res, next) => {
   shutdown(req.domain.id).then(
     message =>
       res
         .status(202)
-        .type('application/vnd.api+json')
+        .type('application/hal+json')
         .send(
           s({
-            jsonapi: {
-              version: '1.0'
+            _links: {
+              self: `${selfLink(req)}/shutdown`,
+              parent: selfLink(req)
             },
-            data: {
-              type: 'message',
-              id: message
-            },
-            links: {
-              self: `${req.protocol}://${req.headers.host}/api/domains/${req.domain.id}/shutdown`
-            }
+            message
           })
         ),
     next

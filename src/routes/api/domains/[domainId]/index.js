@@ -1,29 +1,10 @@
-import { omit } from 'ramda'
 import wrapInErrorHandler from '../../../_wrap-in-error-handler'
 import s from '../../../../fn/s'
 
-export const render = ({ protocol, headers: { host }, domain }) => ({
-  jsonapi: {
-    version: '1.0'
-  },
-  data: renderData({ domain }),
-  links: renderLinks({ protocol, headers: { host }, domain })
+export const render = ({ protocol, headers, domain }) => ({
+  _links: renderLinks({ protocol, headers, domain }),
+  ...domain
 })
-
-export const renderData = ({ domain }) => ({
-  type: 'domain',
-  id: domain.id,
-  attributes: omit(['id'], domain)
-})
-
-const selfLink = ({ protocol, headers: { host }, domain: { id } }) =>
-  `${protocol}://${host}/api/domains/${id}`
-
-const mayStart = ({ state }) =>
-  !['running', 'started'].includes(state.toLowerCase())
-
-const mayShutdown = ({ state }) =>
-  !['shutdown', 'shut off', 'stopped'].includes(state.toLowerCase())
 
 export const renderLinks = ({ protocol, headers, domain }) => ({
   self: selfLink({ protocol, domain, headers }),
@@ -35,6 +16,15 @@ export const renderLinks = ({ protocol, headers, domain }) => ({
     : undefined
 })
 
+export const selfLink = ({ protocol, headers: { host }, domain: { id } }) =>
+  `${protocol}://${host}/api/domains/${id}`
+
+const mayStart = ({ state }) =>
+  !['running', 'started'].includes(state.toLowerCase())
+
+const mayShutdown = ({ state }) =>
+  !['shutdown', 'shut off', 'stopped'].includes(state.toLowerCase())
+
 export const get = wrapInErrorHandler((req, res, next) => {
-  res.type('application/vnd.api+json').send(s(render(req)))
+  res.type('application/hal+json').send(s(render(req)))
 })
