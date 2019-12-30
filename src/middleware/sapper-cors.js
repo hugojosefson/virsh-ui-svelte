@@ -30,6 +30,12 @@ const sapperCors = ({ routeProp = 'sapperRoute', corsOptions }) => (
   ].filter(isHttpMethod)
 
   const handleThisRequest = compose(
+    (req, res, next) => {
+      if (req.method.toUpperCase() === 'OPTIONS') {
+        res.header('Allow', methods.join(','))
+      }
+      next()
+    },
     cors({ ...corsOptions, methods }),
     allowMethods(methods)
   )

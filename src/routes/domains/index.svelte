@@ -1,6 +1,15 @@
 <script context="module">
+  import {
+    json,
+    normalize,
+    arrayifyCollection
+  } from '../../fn/normalize-response'
+
   export async function preload(page, session) {
-    const domains = await this.fetch('/api/domains').then(res => res.json())
+    const domains = await this.fetch(`/api/domains`)
+      .then(json)
+      .then(arrayifyCollection)
+      .then(normalize)
     return { domains }
   }
 </script>
@@ -14,7 +23,7 @@
 <h1>/domains</h1>
 
 <ul>
-  {#each domains.domains as domain}
+  {#each domains as domain}
     <li>
       [ {domain.state} ] &nbsp;
       <a href={`/domains/${domain.id}`}>{domain.name}</a>

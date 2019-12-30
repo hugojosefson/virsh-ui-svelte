@@ -74,6 +74,7 @@
     "express": "^4.17.1",
     "highland": "^2.13.5",
     "http-errors": "^1.7.3",
+    "map-obj": "^4.1.0",
     "node-pty": "^0.9.0",
     "ramda": "^0.26.1",
     "sirv": "^0.4.0"
