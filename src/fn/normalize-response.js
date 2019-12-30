@@ -1,4 +1,4 @@
-import { complement as not, equals, map, omit, pipe } from 'ramda'
+import { complement as not, equals, map, pipe } from 'ramda'
 import mapObj from 'map-obj'
 
 import o2a from './o2a'
@@ -18,12 +18,15 @@ const normalizeLinks = (key, value) => {
 const mapper = pipe(normalizeLinks)
 
 export const arrayifyCollection = source => {
+  if (!source) {
+    return []
+  }
   if (!source._collection) {
     return source
   }
 
   const target = [...source._collection]
-  const otherProps = omit(['_collection'], source)
+  const otherProps = { ...source, _collection: undefined }
   return Object.assign(target, otherProps)
 }
 
