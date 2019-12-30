@@ -1,41 +1,24 @@
 <script context="module">
-  import o2a from '../../fn/o2a'
   import { json, normalize } from '../../fn/normalize-response'
 
   export async function preload(page, session) {
-    const links = _links =>
-      o2a('rel', '...')(_links).filter(({ rel }) => rel !== 'self')
-
-    const allowedMethods = href =>
-      this.fetch(href, { method: 'OPTIONS' }).then(response =>
-        (response.headers.get('Allow') || '').split(',')
-      )
-
-    const getActions = data =>
-      Promise.all(
-        links(data._links).map(async link => ({
-          ...link,
-          methods: (await allowedMethods(link.href)).filter(
-            method => method !== 'OPTIONS'
-          )
-        }))
-      )
+    const fetchFn = window && window.fetch || this.fetch
     const { domainId } = page.params
-    const domain = await this.fetch(`/api/domains/${domainId}`)
+    const domain = await fetchFn(`/api/domains/${domainId}`)
       .then(json)
-      .then(normalize)
+      .then(normalize(fetchFn))
 
-    const actions = await getActions(domain)
-
-    return { domain, actions }
+    return { domain }
   }
 </script>
 
 <script>
   export let domain
-  export let actions
-  const doMethod = href => method => () =>
-    fetch(href, { method }).then(response => console.log(response))
+
+  const perform = action => () =>
+    fetch(action.href, { method: action.method }).then(response =>
+      console.log(response)
+    )
 </script>
 
 <a href="/domains">&lt;-- back</a>
@@ -44,19 +27,17 @@
 
 <h2>State</h2>
 Domain {domain.name || domain.id} is
-{#if domain.stateReason}
+{#if domain.stateReason && domain.stateReason !== 'unknown'}
   {domain.state}, because {domain.stateReason}.
 {:else}{domain.state}.{/if}
 
 <h2>Actions</h2>
 
 <ul>
-  {#each actions as action}
+  {#each domain._links as link}
     <li>
-      {#each action.methods as method}
-        <button on:click={doMethod(action.href)(method)}>
-          {method} {action.rel}
-        </button>
+      {#each link.actions as action}
+        <button on:click={perform(action)}>{action.method} {link.rel}</button>
       {/each}
     </li>
   {/each}
