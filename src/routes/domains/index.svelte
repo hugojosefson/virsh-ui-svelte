@@ -1,21 +1,28 @@
 <script context="module">
-  import {
-    json,
-    normalize,
-    arrayifyCollection,
-  } from '../../fn/normalize-response'
+  import { json, normalize } from '../../fn/normalize-response'
 
   export async function preload(page, session) {
-    const domains = await this.fetch(`/api/domains`)
+    const _domains = await this.fetch(`/api/domains`)
       .then(json)
-      .then(arrayifyCollection)
-      .then(normalize)
-    return { domains }
+      .then(normalize(this.fetch))
+    return { _domains }
   }
 </script>
 
 <script>
-  export let domains
+  import { onMount } from 'svelte'
+  import { arrayifyCollection } from '../../fn/normalize-response'
+  import createReload from '../../fn/create-reload'
+
+  export let _domains
+  let domains
+  $: domains = arrayifyCollection(_domains)
+
+  onMount(
+    createReload(preload, [], preloaded => {
+      _domains = preloaded._domains
+    })
+  )
 </script>
 
 <a href="/">&lt;-- back</a>

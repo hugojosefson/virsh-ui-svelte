@@ -2,33 +2,30 @@
   import { json, normalize } from '../../fn/normalize-response'
 
   export async function preload(page, session) {
-    const fetchFn = (window && window.fetch) || this.fetch
     const { domainId } = page.params
-    const domain = await fetchFn(`/api/domains/${domainId}`)
+    const domain = await this.fetch(`/api/domains/${domainId}`)
       .then(json)
-      .then(normalize(fetchFn))
+      .then(normalize(this.fetch))
 
     return { domain }
   }
 </script>
 
 <script>
+  import { onMount } from 'svelte'
+  import createReload from '../../fn/create-reload'
+
   export let domain
-  let domainId
-  $: domainId = domain.id
+  $: onMount(
+    createReload(preload, [{ params: { domainId: domain.id } }], preloaded => {
+      domain = preloaded.domain
+    })
+  )
 
   const perform = action => () =>
     fetch(action.href, { method: action.method }).then(response =>
       console.log(response)
     )
-
-  const reload = async () => {
-    domain = (await preload({ params: { domainId } })).domain
-    setTimeout(reload, 1000)
-  }
-
-  setTimeout(reload, 1000)
-
 </script>
 
 <a href="/domains">&lt;-- back</a>
@@ -38,11 +35,10 @@
 <h2>State</h2>
 
 <p>
-
-Domain {domain.name || domain.id} is
-{#if domain.stateReason && domain.stateReason !== 'unknown'}
-  {domain.state}, because {domain.stateReason}.
-{:else}{domain.state}.{/if}
+  Domain {domain.name || domain.id} is
+  {#if domain.stateReason && domain.stateReason !== 'unknown'}
+    {domain.state}, because {domain.stateReason}.
+  {:else}{domain.state}.{/if}
 </p>
 
 <h2>Actions</h2>
