@@ -7,5 +7,5 @@ export default getAppStateStream => render => (ws, req) => {
       ws.send(s(render(req)))
     }
   })
-  ws.on('close', appStateStream.destroy.bind(appStateStream))
+  ws.on('close', () => appStateStream.destroy())
 }

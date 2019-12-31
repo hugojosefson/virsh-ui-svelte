@@ -12,15 +12,21 @@
 </script>
 
 <script>
+  import ReconnectingWebSocket from 'reconnecting-websocket'
   import { onMount } from 'svelte'
-  import createReload from '../../fn/create-reload'
 
   export let domain
-  $: onMount(
-    createReload(preload, [{ params: { domainId: domain.id } }], preloaded => {
-      domain = preloaded.domain
+  onMount(() => {
+    const ws = new ReconnectingWebSocket(
+            window.location.origin.replace(/^http/, 'ws') + `/api/domains/${domain.id}`
+    )
+    ws.addEventListener('message', async event => {
+      domain = await Promise.resolve(event.data)
+              .then(JSON.parse)
+              .then(normalize(fetch))
     })
-  )
+    return () => ws.close()
+  })
 
   const perform = action => () =>
     fetch(action.href, { method: action.method }).then(response =>
