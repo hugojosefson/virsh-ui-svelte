@@ -12,7 +12,11 @@ import populateSapperRoute from '../middleware/populate-sapper-route'
 import sapperCors from '../middleware/sapper-cors'
 import errorHandler from '../middleware/error-handler'
 import { render as renderDomains } from '../routes/api/domains'
+import { render as renderDomain } from '../routes/api/domains/[domainId]'
 import wsPusher from './ws-pusher'
+
+const use = middleware => (ws, req, next) =>
+  middleware(req, Symbol('fakeres'), next)
 
 export default async ({ dev, trustProxy }) => {
   const { getAppStateStream, getPath } = await initAppState()
@@ -30,7 +34,12 @@ export default async ({ dev, trustProxy }) => {
     .use(populateSapperRoute({ manifest }))
     .use(sapperCors({ corsOptions: { origin: true } }))
 
-    .use('/api/domains/:domain', populateDomain(getPath))
+    .use('/api/domains/:domainId', populateDomain(getPath))
+    .ws(
+      '/api/domains/:domainId',
+      use(populateDomain(getPath)),
+      onAppState(renderDomain)
+    )
     .use(errorHandler({ dev }))
 
     .use(sapper.middleware())
