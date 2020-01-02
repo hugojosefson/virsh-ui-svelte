@@ -1,12 +1,15 @@
 import httpError from 'http-errors'
+import populateReq from './populate-req'
+import { from, throwError } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 
-export default getPath => (req, res, next) => {
-  const domain = getPath(['domains', req.params.domainId])
-
-  if (!domain) {
-    return next(httpError(404, `Domain not found.`))
-  }
-
-  req.domain = domain
-  next()
-}
+export default domainObsGetter =>
+  populateReq(req =>
+    domainObsGetter(req).pipe(
+      mergeMap(domain =>
+        domain
+          ? from([{ domain }])
+          : throwError(httpError(404, `Domain not found.`))
+      )
+    )
+  )

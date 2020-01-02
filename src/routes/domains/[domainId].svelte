@@ -3,9 +3,8 @@
 
   export async function preload(page, session) {
     const { domainId } = page.params
-    const domain = await this.fetch(`/api/domains/${domainId}`)
-      .then(json)
-      .then(normalize(this.fetch))
+    const url = `/api/domains/${domainId}`
+    const domain = await this.fetch(url).then(json).then(normalize(this.fetch))
 
     return { domain }
   }
@@ -18,12 +17,13 @@
   export let domain
   onMount(() => {
     const ws = new ReconnectingWebSocket(
-            window.location.origin.replace(/^http/, 'ws') + `/api/domains/${domain.id}`
+      window.location.origin.replace(/^http/, 'ws') +
+        `/api/domains/${domain.id}`
     )
     ws.addEventListener('message', async event => {
       domain = await Promise.resolve(event.data)
-              .then(JSON.parse)
-              .then(normalize(fetch))
+        .then(JSON.parse)
+        .then(normalize(fetch))
     })
     return () => ws.close()
   })

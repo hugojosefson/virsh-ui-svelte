@@ -1,15 +1,11 @@
-const findRoute = (manifest, req) =>
-  manifest.server_routes.find(route => route.pattern.test(req.url))
+import populateReq from './populate-req'
+import { of } from 'rxjs'
 
-export default ({ manifest, routeProp = 'sapperRoute' }) => (
-  req,
-  res,
-  next
-) => {
-  const foundRoute = findRoute(manifest, req)
-  if (foundRoute) {
-    req[routeProp] = foundRoute
-  }
+const findSapperRoute = (manifest, url) =>
+  manifest.server_routes.find(route => route.pattern.test(url))
 
-  next()
-}
+export default ({ manifest, routeProp = 'sapperRoute' }) =>
+  populateReq(req => {
+    const foundRoute = findSapperRoute(manifest, req.url)
+    return foundRoute ? of({ [routeProp]: foundRoute }) : of({})
+  })

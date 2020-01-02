@@ -1,19 +1,7 @@
-import { always, compose, lensPath, path as rPath, set } from 'ramda'
-import _ from 'highland'
-import { getDomains, getEventLineStream } from './virsh'
-import streamToGetter from '../fn/stream-to-getter'
-
-const EVENT_LINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
-
-const lineToSingleEventStream = line => {
-  const matches = line.match(EVENT_LINE_REGEX)
-  if (matches) {
-    const [, timestamp, type, name, message] = matches
-    return _.of({ timestamp, type, name, message })
-  } else {
-    return _([])
-  }
-}
+import { always, compose, equals, lensPath, path as rPath, set } from 'ramda'
+import { BehaviorSubject, from } from 'rxjs'
+import { filter, pluck, distinctUntilChanged, mergeScan } from 'rxjs/operators'
+import { getDomains, getEventObservable } from './virsh'
 
 const findId = (name, appState) => {
   const domain = Object.values(appState.domains).find(
@@ -33,7 +21,7 @@ const getIdFromName = async (name, appState) => {
   return { id: newId, appState: newAppState }
 }
 
-const mutatorFactories = {
+const appStateMapperFactories = {
   lifecycle: event => async appState => {
     const { name, message } = event
     const [, state, , stateReason] = message.match(/^([^ ]+)( (.+)?)?/)
@@ -45,33 +33,38 @@ const mutatorFactories = {
   },
 }
 
-const mutatorFactoryFor = type =>
-  mutatorFactories[type] || always(Promise.resolve.bind(Promise))
+const appStateMapperFactoryFor = type =>
+  appStateMapperFactories[type] || always(Promise.resolve.bind(Promise))
 
-const eventToMutator = event => mutatorFactoryFor(event.type)(event)
+const eventToAppStateMapper = event =>
+  appStateMapperFactoryFor(event.type)(event)
 
-export default async () => {
+const initAppState = async () => {
   const domains = await getDomains()
   const initialAppState = { domains }
+  const appStateSubject = new BehaviorSubject(initialAppState)
 
-  const lineStream = getEventLineStream()
-  const eventStream = lineStream.flatMap(lineToSingleEventStream)
-  const appStateStreamStream = _()
-  const appStateStream = appStateStreamStream.sequence()
+  getEventObservable()
+    .pipe(
+      mergeScan(
+        (appState, event) => from(eventToAppStateMapper(event)(appState)),
+        initialAppState
+      )
+    )
+    .subscribe(appStateSubject)
 
-  eventStream.each(event => {
-    const mutator = eventToMutator(event)
-    const appState = getAppState()
-    const promise = mutator(appState)
-    appStateStreamStream.write(_(promise))
-  })
-
-  const getAppState = streamToGetter(appStateStream.fork(), initialAppState)
-  const getPath = path => rPath(path, getAppState())
-  const getAppStateStream = () => appStateStream.fork()
+  const onPath = path =>
+    appStateSubject.pipe(
+      pluck(...path),
+      filter(Boolean),
+      distinctUntilChanged(equals)
+    )
+  const getPath = path => rPath(path, appStateSubject.getValue())
 
   return {
-    getAppStateStream,
+    onPath,
     getPath,
   }
 }
+
+export default initAppState
