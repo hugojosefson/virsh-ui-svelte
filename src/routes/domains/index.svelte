@@ -15,12 +15,12 @@
   import { arrayifyCollection } from '../../fn/normalize-response'
 
   export let _domains
-  let domains
-  $: domains = arrayifyCollection(_domains)
+  let domain
+  $: domain = arrayifyCollection(_domains)
 
   onMount(() => {
     const ws = new ReconnectingWebSocket(
-      window.location.origin.replace(/^http/, 'ws') + '/api/domains'
+      window.location.origin.replace(/^http/, 'ws') + '/api/domainers'
     )
     ws.addEventListener('message', async event => {
       _domains = await Promise.resolve(event.data)
@@ -40,7 +40,7 @@
 <a href="/">&lt;-- back</a>
 
 <ul>
-  {#each domains as domain}
+  {#each domain as domain}
     <li>
       [ {domain.state} ] &nbsp;
       <a href={`/domains/${domain.id}`}>{domain.name}</a>

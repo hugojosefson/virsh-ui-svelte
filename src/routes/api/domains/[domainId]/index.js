@@ -2,10 +2,17 @@ import wrapInErrorHandler from '../../../_wrap-in-error-handler'
 import s from '../../../../fn/s'
 import { selfLink as domainsLink } from '../_self-link'
 
-export const render = req => ({
-  _links: renderLinks(req),
-  ...req.domain
-})
+export const render = (req, overrideDomain) => {
+  const effectiveReq = {
+    ...req,
+    protocol: req.protocol,
+    domain: overrideDomain || req.domain
+  }
+  return {
+    _links: renderLinks(effectiveReq),
+    ...effectiveReq.domain
+  }
+}
 
 export const renderLinks = req => ({
   self: selfLink(req),

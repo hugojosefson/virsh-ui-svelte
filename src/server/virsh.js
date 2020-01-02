@@ -1,8 +1,21 @@
 import { zipObj, zipWith } from 'ramda'
-import _ from 'highland'
-import execa from 'execa'
 import { spawn } from 'node-pty'
+import { fromEvent, of, EMPTY } from 'rxjs'
+import { concatMap } from 'rxjs/operators'
+import execa from 'execa'
 import httpError from 'http-errors'
+
+const EVENT_LINE_REGEX = /^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d[^:]+): event '([^']+)' for domain ([^:]+): (.*)/
+
+const lineToSingleEventObservable = line => {
+  const matches = line.match(EVENT_LINE_REGEX)
+  if (matches) {
+    const [, timestamp, type, name, message] = matches
+    return of({ timestamp, type, name, message })
+  } else {
+    return EMPTY
+  }
+}
 
 const virshErrorMappers = [
   {
@@ -59,16 +72,13 @@ export const getDomains = async (ids = getIds()) => {
   return zipObj(_ids, domainsWithNameAndState)
 }
 
-export const getEventLineStream = () => {
-  const pty = spawn(
-    'virsh',
-    ['event', '--loop', '--timestamp', '--all'],
-    undefined
-  )
-  return _(pty)
-    .split()
-    .compact()
+export const getEventLineObservable = () => {
+  const ptyProcess = spawn('virsh', ['event', '--loop', '--timestamp', '--all'])
+  return fromEvent(ptyProcess, 'data')
 }
+
+export const getEventObservable = () =>
+  getEventLineObservable().pipe(concatMap(lineToSingleEventObservable))
 
 export const getState = domain => virsh('domstate', domain)
 export const start = domain => virsh('start', domain)

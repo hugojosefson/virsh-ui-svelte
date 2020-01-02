@@ -1,18 +1,22 @@
 import s from '../fn/s'
 import app from './app'
 import startServer from './start-server'
+import testOutput from './test-output'
+;(async () => {
+  // await testOutput()
 
-const { PORT, NODE_ENV } = process.env
-const dev = NODE_ENV === 'development'
+  const { PORT, NODE_ENV } = process.env
+  const dev = NODE_ENV === 'development'
 
-app({ dev })
-  .then(startServer(PORT))
-  .then(
-    server => {
-      console.log(`Listening on ${s(server.address())}`)
-    },
-    error => {
-      console.error('error', error)
-      process.exit(1)
-    }
-  )
+  app({ dev })
+    .then(startServer(PORT))
+    .then(
+      server => {
+        console.log(`Listening on ${s(server.address())}`)
+      },
+      error => {
+        console.error('error', error)
+        process.exit(1)
+      }
+    )
+})()

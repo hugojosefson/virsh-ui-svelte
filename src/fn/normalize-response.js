@@ -48,7 +48,7 @@ export const normalize = (fetchFn = fetch) => async source => {
 
   const getActionableLinks = data =>
     Promise.all(
-      links(data._links).map(async link => ({
+      links(data._links || {}).map(async link => ({
         ...link,
         actions: await getActions(link)
       }))
