@@ -31,9 +31,13 @@
   })
 </script>
 
-<a href="/">&lt;-- back</a>
+<svelte:head>
+  <title>/domains</title>
+</svelte:head>
 
 <h1>/domains</h1>
+
+<a href="/">&lt;-- back</a>
 
 <ul>
   {#each domains as domain}

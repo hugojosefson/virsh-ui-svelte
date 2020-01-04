@@ -28,9 +28,13 @@
     )
 </script>
 
-<a href="/domains">&lt;-- back</a>
+<svelte:head>
+  <title>{domain.name}</title>
+</svelte:head>
 
 <h1>/domains/{domain.name}</h1>
+
+<a href="/domains">&lt;-- back</a>
 
 <h2>State</h2>
 
