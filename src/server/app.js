@@ -31,8 +31,8 @@ export default async ({ dev, trustProxy }) => {
       '/api/**',
       populateReq(() => of({ getPath, onPath }))
     )
+    .ws('/api/domains', wsPush(domainsObsGetter, renderDomains))
     .use('/api/domains/:domainId', populateDomain(domainObsGetter))
-    .ws('/api/domainers', wsPush(domainsObsGetter, renderDomains))
     .ws(
       '/api/domains/:domainId',
       wsUse(populateDomain(domainObsGetter)),
