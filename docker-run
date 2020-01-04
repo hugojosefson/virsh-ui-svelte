@@ -11,5 +11,5 @@ docker run --rm -it \
   -v "${LIBVIRT_SOCK}":"${LIBVIRT_SOCK}" \
   -e PORT:"${PORT}" \
   -p "${PORT}":"${PORT}" \
-  hugojosefson/virsh-svelte-ui:latest \
+  hugojosefson/virsh-ui-svelte:latest \
   "$@"

@@ -5,5 +5,5 @@ set -e
 cd "$(dirname ${0})"
 
 docker build \
-  --tag hugojosefson/virsh-svelte-ui:latest \
+  --tag hugojosefson/virsh-ui-svelte:latest \
   .
