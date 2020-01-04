@@ -20,7 +20,7 @@
 
   onMount(() => {
     const ws = new ReconnectingWebSocket(
-      window.location.origin.replace(/^http/, 'ws') + '/api/domainers'
+      window.location.origin.replace(/^http/, 'ws') + '/api/domains'
     )
     ws.addEventListener('message', async event => {
       _domains = await Promise.resolve(event.data)
