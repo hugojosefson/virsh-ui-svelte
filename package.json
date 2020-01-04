@@ -1,5 +1,5 @@
 {
-  "name": "@hugojosefson/virsh-svelte-ui",
+  "name": "@hugojosefson/virsh-ui-svelte",
   "private": true,
   "description": "Single-purpose app for starting a virtual machine.",
   "version": "0.1.0",
