@@ -36,14 +36,19 @@
 </svelte:head>
 
 <h1>/domains</h1>
+<p>
+  <a href="/">&lt;-- back</a>
+</p>
 
-<a href="/">&lt;-- back</a>
-
-<ul>
+<table>
   {#each domain as domain}
-    <li>
-      [ {domain.state} ] &nbsp;
-      <a href={`/domains/${domain.id}`}>{domain.name}</a>
-    </li>
+    <tr>
+      <td>
+        <a href={`/domains/${domain.id}`}>{domain.name}</a>
+      </td>
+      <td>
+        <a href={`/domains/${domain.id}`}>( {domain.state} )</a>
+      </td>
+    </tr>
   {/each}
-</ul>
+</table>
