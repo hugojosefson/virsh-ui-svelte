@@ -13,6 +13,7 @@
 <script>
   import ReconnectingWebSocket from 'reconnecting-websocket'
   import { onMount } from 'svelte'
+  import Action from '../../components/action.svelte'
 
   export let domain
   onMount(() => {
@@ -27,11 +28,6 @@
     })
     return () => ws.close()
   })
-
-  const perform = action => () =>
-    fetch(action.href, { method: action.method }).then(response =>
-      console.log(response)
-    )
 </script>
 
 <svelte:head>
@@ -57,7 +53,7 @@
   {#each domain._links as link}
     <li>
       {#each link.actions as action}
-        <button on:click={perform(action)}>{action.method} {link.rel}</button>
+        <Action {link} {action} />
       {/each}
     </li>
   {/each}
