@@ -30,7 +30,6 @@ export default async ({ dev }) => {
       populateReq(() => of({ getPath, onPath }))
     )
     .ws('/api/domains', wsPush(domainsObsGetter, renderDomains))
-    .use('/api/domains/:domainId', populateDomain(domainObsGetter))
     .ws(
       '/api/domains/:domainId',
       wsUse(populateDomain(domainObsGetter)),
@@ -43,6 +42,7 @@ export default async ({ dev }) => {
     .use(populateSapperRoute({ manifest }))
     .use(sapperCors({ corsOptions: { origin: true } }))
 
+    .use('/api/domains/:domainId', populateDomain(domainObsGetter))
     .use(errorHandler({ dev }))
     .use(sapper.middleware())
 }
