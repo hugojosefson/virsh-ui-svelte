@@ -1,29 +1,26 @@
 <script>
-  import s from '../fn/s'
+  import { createEventDispatcher } from 'svelte'
 
   export let link
   export let action
-  let message
 
-  const perform = action => async () => {
+  const dispatch = createEventDispatcher()
+
+  const performAction = action => async () => {
     const response = await fetch(action.href, { method: action.method })
-    console.log(response)
-
     if (response.ok) {
-      message = (await response.json()).message
+      dispatch('result', { message: (await response.json()).message })
     } else {
-      message = {
-        status: response.status,
-        statusText: response.statusText,
-        body: await response.json()
-      }
+      dispatch('result', {
+        error: {
+          status: response.status,
+          statusText: response.statusText,
+          body: await response.json()
+        }
+      })
     }
-
   }
+
 </script>
 
-<button on:click={perform(action)}>{action.method} {link.rel}</button>
-
-{#if message}
-  <pre>{s(message)}</pre>
-{/if}
+<button on:click={performAction(action)}>{action.method} {link.rel}</button>

@@ -15,6 +15,7 @@
 <script>
   import ReconnectingWebSocket from 'reconnecting-websocket'
   import { onMount } from 'svelte'
+  import s from '../../fn/s'
   import Action from '../../components/action.svelte'
 
   export let domain
@@ -27,9 +28,16 @@
       domain = await Promise.resolve(event.data)
         .then(JSON.parse)
         .then(normalize(fetch))
+      handleActionResult()
     })
     return () => ws.close()
   })
+
+  let actionResult = {}
+  const handleActionResult = ({detail} = {}) => {
+    actionResult = detail || {}
+  }
+
 </script>
 
 <svelte:head>
@@ -55,8 +63,17 @@
   {#each domain._links as link}
     <li>
       {#each link.actions as action}
-        <Action {link} {action} />
+        <Action on:result={handleActionResult} {link} {action} />
       {/each}
     </li>
   {/each}
 </ul>
+
+
+{#if actionResult.message}
+  <p>{actionResult.message.replace(domain.id, domain.name)}{`${/\.$/.test(actionResult.message) ? '' : '.'}`}</p>
+{/if}
+
+{#if actionResult.error}
+  <pre>{s(actionResult.error)}</pre>
+{/if}
