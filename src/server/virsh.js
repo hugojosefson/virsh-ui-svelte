@@ -80,6 +80,20 @@ export const getEventLineObservable = () => {
 export const getEventObservable = () =>
   getEventLineObservable().pipe(concatMap(lineToSingleEventObservable))
 
-export const getState = domain => virsh('domstate', domain)
+export const toLowerCase = s => s.toLowerCase()
+
+export const mapState = state =>
+  ({
+    'shut off': 'off',
+    shutdown: 'off',
+    stopped: 'off',
+    running: 'on',
+    resumed: 'on',
+    started: 'on',
+  }[state] || state)
+
+export const getState = domain =>
+  virsh('domstate', domain).then(toLowerCase).then(mapState)
+
 export const start = domain => virsh('start', domain)
 export const shutdown = domain => virsh('shutdown', domain, '--mode', 'acpi')

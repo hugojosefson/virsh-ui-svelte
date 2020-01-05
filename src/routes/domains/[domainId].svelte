@@ -32,21 +32,20 @@
   })
 
   let actionResult = {}
-  const handleActionResult = ({detail} = {}) => {
+  const handleActionResult = ({ detail } = {}) => {
     actionResult = detail || {}
   }
-
 </script>
 
 <svelte:head>
   <title>{domain.name}</title>
 </svelte:head>
 
+<p>
+  <a href="/domains">&lt;-- back</a>
+</p>
+
 <h1>/domains/{domain.name}</h1>
-
-<a href="/domains">&lt;-- back</a>
-
-<h2>State</h2>
 
 <p>
   Domain {domain.name || domain.id} is
@@ -55,21 +54,18 @@
   {:else}{domain.state}.{/if}
 </p>
 
-<h2>Actions</h2>
-
-<ul>
+<p>
   {#each domain._links as link}
-    <li>
-      {#each link.actions as action}
-        <Action on:result={handleActionResult} {link} {action} />
-      {/each}
-    </li>
+    {#each link.actions as action}
+      <Action on:result={handleActionResult} {link} {action} />
+    {/each}
   {/each}
-</ul>
-
+</p>
 
 {#if actionResult.message}
-  <p>{actionResult.message.replace(domain.id, domain.name)}{`${/\.$/.test(actionResult.message) ? '' : '.'}`}</p>
+  <p>
+    {actionResult.message.replace(domain.id, domain.name)}{`${/\.$/.test(actionResult.message) ? '' : '.'}`}
+  </p>
 {/if}
 
 {#if actionResult.error}

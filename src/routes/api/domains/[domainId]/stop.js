@@ -12,7 +12,7 @@ export const post = wrapInErrorHandler((req, res, next) => {
         .send(
           s({
             _links: {
-              self: `${selfLink(req)}/shutdown`,
+              self: `${selfLink(req)}/stop`,
               parent: selfLink(req),
             },
             message,

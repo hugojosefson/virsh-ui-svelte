@@ -17,16 +17,16 @@ export const render = (req, overrideDomain) => {
 export const renderLinks = req => ({
   self: selfLink(req),
   start: mayStart(req.domain) ? `${selfLink(req)}/start` : undefined,
-  shutdown: mayShutdown(req.domain) ? `${selfLink(req)}/shutdown` : undefined,
+  stop: mayStop(req.domain) ? `${selfLink(req)}/stop` : undefined,
 })
 
 export const selfLink = req => `${domainsLink(req)}/${req.domain.id}`
 
 const mayStart = ({ state }) =>
-  !['running', 'started'].includes(state.toLowerCase())
+  !['running', 'started', 'resumed', 'on'].includes(state.toLowerCase())
 
-const mayShutdown = ({ state }) =>
-  !['shutdown', 'shut off', 'stopped'].includes(state.toLowerCase())
+const mayStop = ({ state }) =>
+  !['shutdown', 'shut off', 'stopped', 'off'].includes(state.toLowerCase())
 
 export const get = wrapInErrorHandler((req, res, next) => {
   res.type('application/hal+json').send(s(render(req)))

@@ -1,7 +1,7 @@
 import { always, compose, equals, lensPath, path as rPath, set } from 'ramda'
 import { BehaviorSubject, from } from 'rxjs'
 import { filter, pluck, distinctUntilChanged, mergeScan } from 'rxjs/operators'
-import { getDomains, getEventObservable } from './virsh'
+import { getDomains, getEventObservable, mapState, toLowerCase } from './virsh'
 
 const findId = (name, appState) => {
   const domain = Object.values(appState.domains).find(
@@ -27,8 +27,8 @@ const appStateMapperFactories = {
     const [, state, , stateReason] = message.match(/^([^ ]+)( (.+)?)?/)
     const { id, appState: newAppState } = await getIdFromName(name, appState)
     return compose(
-      set(lensPath(['domains', id, 'state']), state),
-      set(lensPath(['domains', id, 'stateReason']), stateReason)
+      set(lensPath(['domains', id, 'state']), mapState(toLowerCase(state))),
+      set(lensPath(['domains', id, 'stateReason']), toLowerCase(stateReason))
     )(newAppState)
   },
 }
