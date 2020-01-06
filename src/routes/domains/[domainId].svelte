@@ -50,10 +50,7 @@
 <h1>/domains/{domain.name}</h1>
 
 <p>
-  Domain {domain.name || domain.id} is
-  {#if domain.stateReason && domain.stateReason !== 'unknown'}
-    {domain.state}, because {domain.stateReason}.
-  {:else}{domain.state}.{/if}
+  Domain {domain.name || domain.id} is {domain.state}.
 </p>
 
 <p>
