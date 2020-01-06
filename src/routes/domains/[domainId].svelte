@@ -47,9 +47,7 @@
 
 <h1>/domains/{domain.name}</h1>
 
-<p>
-  Domain {domain.name || domain.id} is {domain.state}.
-</p>
+<p>Domain {domain.name || domain.id} is {domain.state}.</p>
 
 <p>
   {#each domain._links as link}
