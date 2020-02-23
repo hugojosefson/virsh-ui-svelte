@@ -103,14 +103,17 @@ To start a production version of your app, run `yarn build && yarn start`. This
 will disable live reloading, and activate the appropriate bundler plugins.
 
 You can deploy your application to any environment that supports Node 10 or
-above. As an example, to deploy to [ZEIT Now](https://zeit.co/now) when using `sapper export`, run this command:
+above. As an example, to deploy to [ZEIT Now](https://zeit.co/now) when using
+`sapper export`, run this command:
 
 ```bash
 npx now
 ```
 
-If your app can't be exported to a static site, you can use the [now-sapper](https://github.com/thgh/now-sapper) builder. You can find instructions on how to do so in its [README](https://github.com/thgh/now-sapper#basic-usage).
-
+If your app can't be exported to a static site, you can use the
+[now-sapper](https://github.com/thgh/now-sapper) builder. You can find
+instructions on how to do so in its
+[README](https://github.com/thgh/now-sapper#basic-usage).
 
 ## Using external components
 
