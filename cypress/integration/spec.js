@@ -1,19 +1,18 @@
-describe('Sapper template app', () => {
+describe('virsh-ui', () => {
   beforeEach(() => {
     cy.visit('/')
   })
 
-  it('has the correct <h1>', () => {
-    cy.contains('h1', 'Great success!')
+  it('has an <ul>', () => {
+    cy.contains('ul')
   })
 
-  it('navigates to /about', () => {
-    cy.get('nav a').contains('about').click()
-    cy.url().should('include', '/about')
+  it('has an <ul> with <li>domains</li>', () => {
+    cy.get('ul').contains('li', 'domains')
   })
 
-  it('navigates to /blog', () => {
-    cy.get('nav a').contains('blog').click()
-    cy.url().should('include', '/blog')
+  it('navigates to /domains', () => {
+    cy.get('ul').contains('domains').click()
+    cy.url().should('include', '/domains')
   })
 })
