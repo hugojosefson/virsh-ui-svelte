@@ -7,9 +7,9 @@ export default async () => {
   const { getPath, onPath } = await initAppState()
 
   onPath(['domains', '16142a02-ca12-488c-90fa-c02d661956de']).subscribe(
-    o => console.log(s(o)),
+    o => console.log('server/test-output: ', s(o)),
     console.error.bind(console),
-    () => console.log('done')
+    () => console.log('server/test-output: done')
   )
 
   return new Promise(() => {})

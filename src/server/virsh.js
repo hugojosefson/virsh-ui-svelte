@@ -44,7 +44,7 @@ export const virsh = async (...args) => {
       test(cause)
     )
     const error = mapper(cause)
-    log && console.error(error)
+    log && console.error('server/virsh: error', error)
     throw error
   }
 }

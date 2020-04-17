@@ -9,9 +9,11 @@ export default (obsGetter, render) => (ws, req) => {
       }
     },
     error => {
-      console.error(error, error.stack)
+      console.error('server/ws-push: error', error, error.stack)
     }
   )
-  ws.on('error', error => console.error(error, error.stack))
+  ws.on('error', error =>
+    console.error(`server/ws-push: ws.on('error')`, error, error.stack)
+  )
   ws.on('close', unsubscribe)
 }

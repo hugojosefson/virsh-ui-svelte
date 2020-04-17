@@ -15,10 +15,10 @@ import testOutput from './test-output'
     .then(startServer(PORT))
     .then(
       server => {
-        console.log(`Listening on ${s(server.address())}`)
+        console.log(`server: Listening on ${s(server.address())}`)
       },
       error => {
-        console.error('error', error)
+        console.error('server: error', error)
         process.exit(1)
       }
     )
