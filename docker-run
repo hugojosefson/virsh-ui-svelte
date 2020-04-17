@@ -2,7 +2,7 @@
 
 set -e
 
-cd "$(dirname ${0})"
+cd "$(dirname "${0}")"
 
 PORT="${PORT:-3000}"
 LIBVIRT_SOCK="${LIBVIRT_SOCK:-/var/run/libvirt/libvirt-sock}"
