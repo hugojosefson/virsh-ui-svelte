@@ -16,6 +16,8 @@ else
   git_dirty=""
 fi
 
+cat .gitignore .git/info/exclude > .dockerignore
+
 docker build \
   --tag "${project_name}:${project_version}${git_dirty}" \
   --tag "${project_name}:${git_sha}${git_dirty}" \
