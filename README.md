@@ -19,7 +19,8 @@ Web app for managing virtual machines.
 ## Running with Docker
 
 The only thing from this repo you need to run the service in Docker, is
-the script [docker-run](./docker-run).
+the script
+[docker-run](https://github.com/hugojosefson/virsh-ui-svelte/blob/master/docker-run).
 
 `./docker-run` accepts the following optional environment variables:
 
