@@ -21,7 +21,7 @@ Web app for managing virtual machines.
 The only thing from this repo you need to run the service in Docker, is
 the script [docker-run](./docker-run).
 
-`./docker-run` accepts the following environment variables:
+`./docker-run` accepts the following optional environment variables:
 
 | Name           | Default value                   | Description                                 |
 |:---------------|:--------------------------------|:--------------------------------------------|
