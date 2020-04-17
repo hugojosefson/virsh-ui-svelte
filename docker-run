@@ -9,7 +9,7 @@ LIBVIRT_SOCK="${LIBVIRT_SOCK:-/var/run/libvirt/libvirt-sock}"
 
 docker run --rm -it \
   -v "${LIBVIRT_SOCK}":"${LIBVIRT_SOCK}" \
-  -e PORT:"${PORT}" \
+  -e PORT="${PORT}" \
   -p "${PORT}":"${PORT}" \
   hugojosefson/virsh-ui-svelte:latest \
   "$@"
