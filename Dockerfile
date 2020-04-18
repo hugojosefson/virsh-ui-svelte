@@ -21,6 +21,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /
 RUN chmod +rx /tini
 ENTRYPOINT ["/tini", "--"]
 
+## Install virsh
 RUN apt-get update && apt-get install -y \
     libvirt-clients \
  && rm -rf /var/lib/apt/lists/*
