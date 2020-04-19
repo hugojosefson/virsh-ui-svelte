@@ -5,7 +5,6 @@ import { selfLink as domainsLink } from '../_self-link'
 export const render = (req, overrideDomain) => {
   const effectiveReq = {
     ...req,
-    protocol: req.protocol,
     domain: overrideDomain || req.domain,
   }
   return {
