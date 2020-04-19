@@ -1,15 +1,27 @@
 import envConfig from '@hugojosefson/env-config'
+import camelcase from 'camelcase'
+import { pipe } from 'ramda'
+import { renameKeysWith } from 'ramda-adjunct'
 import s from '../fn/s'
 import app from './app'
 import startServer from './start-server'
-;(async () => {
-  const { PORT, NODE_ENV, TRUST_PROXY } = envConfig()
-  const dev = NODE_ENV === 'development'
-  const trustProxy =
-    typeof TRUST_PROXY === 'undefined' ? () => false : TRUST_PROXY
 
-  app({ dev, trustProxy })
-    .then(startServer(PORT))
+const keys = ['PORT', 'NODE_ENV', 'TRUST_PROXY']
+const adjustConfigValues = c => ({
+  dev: c.nodeEnv === 'development',
+  trustProxy: typeof c.trustProxy === 'undefined' ? () => false : c.trustProxy,
+  ...c
+})
+
+;(async () => {
+  const config = envConfig({
+    keys,
+    transform: pipe(renameKeysWith(camelcase), adjustConfigValues)
+  })
+  console.log('server: config: ', s(config))
+
+  app(config)
+    .then(startServer(config.port))
     .then(
       server => {
         console.log(`server: Listening on ${s(server.address())}`)
