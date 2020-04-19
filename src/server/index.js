@@ -2,10 +2,7 @@ import envConfig from '@hugojosefson/env-config'
 import s from '../fn/s'
 import app from './app'
 import startServer from './start-server'
-import testOutput from './test-output'
 ;(async () => {
-  // await testOutput()
-
   const { PORT, NODE_ENV, TRUST_PROXY } = envConfig()
   const dev = NODE_ENV === 'development'
   const trustProxy =
