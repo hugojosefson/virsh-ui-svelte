@@ -7,6 +7,7 @@ import * as sapper from '@sapper/server'
 import { manifest } from '@sapper/internal/manifest-server'
 
 import initAppState from './app-state'
+import Session from './session'
 import populateReq from '../middleware/populate-req'
 import populateSapperRoute from '../middleware/populate-sapper-route'
 import sapperCors from '../middleware/sapper-cors'
@@ -17,7 +18,7 @@ import wsPush from './ws-push'
 import wsUse from './ws-use-middleware'
 import populateDomain from '../middleware/populate-domain'
 
-export default async ({ dev, trustProxy }) => {
+export default async ({ dev, trustProxy, session }) => {
   const { getPath, onPath } = await initAppState()
 
   const domainsObsGetter = () => onPath(['domains'])
@@ -27,6 +28,7 @@ export default async ({ dev, trustProxy }) => {
   return app
     .set('trust proxy', trustProxy)
 
+    .use(Session(session))
     .use(
       '/api/**',
       populateReq(() => of({ getPath, onPath }))
