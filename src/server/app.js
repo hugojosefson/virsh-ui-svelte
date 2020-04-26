@@ -5,6 +5,7 @@ import sirv from 'sirv'
 import { of } from 'rxjs'
 import * as sapper from '@sapper/server'
 import { manifest } from '@sapper/internal/manifest-server'
+import { auth } from 'express-openid-connect'
 
 import initAppState from './app-state'
 import populateReq from '../middleware/populate-req'
@@ -17,7 +18,7 @@ import wsPush from './ws-push'
 import wsUse from './ws-use-middleware'
 import populateDomain from '../middleware/populate-domain'
 
-export default async ({ dev, trustProxy }) => {
+export default async config => {
   const { getPath, onPath } = await initAppState()
 
   const domainsObsGetter = () => onPath(['domains'])
@@ -25,8 +26,9 @@ export default async ({ dev, trustProxy }) => {
 
   const { app } = expressWs(express())
   return app
-    .set('trust proxy', trustProxy)
+    .set('trust proxy', config.trustProxy)
 
+    .use(auth(config.auth))
     .use(
       '/api/**',
       populateReq(() => of({ getPath, onPath }))
@@ -39,12 +41,12 @@ export default async ({ dev, trustProxy }) => {
     )
 
     .use(compression({ threshold: 0 }))
-    .use(sirv('static', { dev }))
+    .use(sirv('static', { dev: config.dev }))
 
     .use(populateSapperRoute({ manifest }))
     .use(sapperCors({ corsOptions: { origin: true } }))
 
     .use('/api/domains/:domainId', populateDomain(domainObsGetter))
-    .use(errorHandler({ dev }))
-    .use(sapper.middleware())
+    .use(errorHandler({ dev: config.dev }))
+    .use(sapper.middleware({ session: req => ({ user: req.openid.user }) }))
 }

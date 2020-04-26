@@ -5,7 +5,7 @@ import s from '../fn/s'
 import app from './app'
 import startServer from './start-server'
 
-const keys = ['PORT', 'NODE_ENV', 'TRUST_PROXY']
+const keys = ['PORT', 'NODE_ENV', 'TRUST_PROXY', 'AUTH']
 const adjustConfigValues = c => ({
   dev: c.nodeEnv === 'development',
   trustProxy: typeof c.trustProxy === 'undefined' ? () => false : c.trustProxy,

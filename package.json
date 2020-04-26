@@ -74,6 +74,7 @@
     "cors": "^2.8.5",
     "execa": "^4.0.0",
     "express": "^4.17.1",
+    "express-openid-connect": "^1.0.1",
     "express-ws": "^4.0.0",
     "http-errors": "^1.7.3",
     "map-obj": "^4.1.0",
