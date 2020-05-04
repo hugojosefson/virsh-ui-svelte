@@ -14,6 +14,12 @@ RUN yarn build
 ###############################################################
 FROM node:13
 
+## Use tini for PID 1 to handle process signals correctly, and support graceful shutdown.
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /
+RUN chmod +rx /tini
+ENTRYPOINT ["/tini", "--"]
+
 RUN mkdir -p /app
 WORKDIR /app
 
