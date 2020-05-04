@@ -753,6 +753,11 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@hugojosefson/env-config@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@hugojosefson/env-config/-/env-config-1.0.5.tgz#6917cc74a254428602da26fa86f00c81d6102c7f"
+  integrity sha512-qEmdp5GzTLOImk89x+KRtQi1c84CK9cBznbA6RZWX0R2OxdoZt7mw/xzHfgpZ/Nw4EX4oHQULiXi+LeexBN3Fg==
+
 "@polka/url@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-0.5.0.tgz#b21510597fd601e5d7c95008b76bf0d254ebfd31"
