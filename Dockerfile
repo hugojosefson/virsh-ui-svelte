@@ -1,4 +1,4 @@
-FROM node:13 as builder
+FROM node:14 as builder
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN yarn
 RUN yarn build
 
 ###############################################################
-FROM node:13
+FROM node:14
 LABEL maintainer="Hugo Josefson <hugo.josefson@jayway.com> (https://www.hugojosefson.com/)"
 
 ## Use tini for PID 1 to handle process signals correctly, and support graceful shutdown.
