@@ -13,6 +13,7 @@ RUN yarn build
 
 ###############################################################
 FROM node:13
+LABEL maintainer="Hugo Josefson <hugo.josefson@jayway.com> (https://www.hugojosefson.com/)"
 
 ## Use tini for PID 1 to handle process signals correctly, and support graceful shutdown.
 ENV TINI_VERSION v0.18.0
