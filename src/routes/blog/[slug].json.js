@@ -17,7 +17,7 @@ export function get(req, res, next) {
     res.json(post)
   } else {
     res.status(404).json({
-      message: 'Not found'
+      message: 'Not found',
     })
   }
 }
