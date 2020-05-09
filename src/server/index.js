@@ -1,22 +1,21 @@
 import envConfig from '@hugojosefson/env-config'
 import camelcase from 'camelcase'
-import { pipe } from 'ramda'
 import { renameKeysWith } from 'ramda-adjunct'
 import s from '../fn/s'
 import app from './app'
 import startServer from './start-server'
 
 const keys = ['PORT', 'NODE_ENV', 'TRUST_PROXY']
-const adjustConfigValues = c => ({
+const adjustConfigValues = (c) => ({
   dev: c.nodeEnv === 'development',
   trustProxy: typeof c.trustProxy === 'undefined' ? () => false : c.trustProxy,
-  ...c
+  ...c,
 })
 
 ;(async () => {
   const config = envConfig({
     keys,
-    transform: pipe(renameKeysWith(camelcase), adjustConfigValues)
+    transformers: [renameKeysWith(camelcase), adjustConfigValues],
   })
   console.log('server: config: ', s(config))
 
