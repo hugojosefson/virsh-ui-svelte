@@ -16,6 +16,6 @@ express()
     sapper.middleware()
   )
   .set('trust proxy', trustProxy)
-  .listen(PORT, (err) => {
+  .listen(PORT, err => {
     if (err) console.error('error', err)
   })
