@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+project_dir="$(dirname "$(readlink -f "${0}")")"
+cd "${project_dir}"
+
+cat .gitignore .git/info/exclude > .dockerignore
+
+project_name="$(node -p "require('./package.json').name.replace(/@/,'')" | tr --delete '\r')"
+project_version="$(node -p "require('./package.json').version" | tr --delete '\r')"
+git_sha="$(git rev-parse HEAD)"
+
+if [[ $(git status --porcelain)  ]]; then
+  git_dirty="-dirty"
+else
+  git_dirty=""
+fi
+
+docker build \
+  --tag "${project_name}:${project_version}${git_dirty}" \
+  --tag "${project_name}:${git_sha}${git_dirty}" \
+  --tag "${project_name}:latest" \
+  .
