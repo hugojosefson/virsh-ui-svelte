@@ -96,4 +96,4 @@ export const getState = domain =>
   virsh('domstate', domain).then(toLowerCase).then(mapState)
 
 export const start = domain => virsh('start', domain)
-export const shutdown = domain => virsh('shutdown', domain, '--mode', 'acpi')
+export const shutdown = domain => virsh('shutdown', domain, '--mode', 'agent,acpi')
