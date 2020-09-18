@@ -1,35 +1,88 @@
 import { always, compose, equals, lensPath, path as rPath, set } from 'ramda'
 import { BehaviorSubject, from } from 'rxjs'
 import { filter, pluck, distinctUntilChanged, mergeScan } from 'rxjs/operators'
-import { getDomains, getEventObservable, mapState, toLowerCase } from './virsh'
+import {
+  getDomains,
+  getNetworks,
+  getEventObservable,
+  mapState,
+  toLowerCase,
+  mapNetworkState,
+} from './virsh'
 
-const findId = (name, appState) => {
+const findDomainId = (name, appState) => {
   const domain = Object.values(appState.domains).find(
     domain => domain.name === name
   )
   return domain ? domain.id : undefined
 }
 
-const getIdFromName = async (name, appState) => {
-  const id = findId(name, appState)
-  if (id) {
-    return { id, appState }
+const findNetworkId = (name, appState) => {
+  const network = Object.values(appState.networks).find(
+    network => network.name === name
+  )
+  return network ? network.id : undefined
+}
+
+const getDomainIdFromName = async (name, appState) => {
+  const domainId = findDomainId(name, appState)
+  if (domainId) {
+    return { domainId, appState }
   }
   const domains = await getDomains()
-  const newAppState = { ...appState, domains }
-  const newId = findId(name, newAppState)
-  return { id: newId, appState: newAppState }
+  const appStateWithNewDomains = { ...appState, domains }
+  const newDomainId = findDomainId(name, appStateWithNewDomains)
+  return { domainId: newDomainId, appState: appStateWithNewDomains }
+}
+
+const getNetworkIdFromName = async (name, appState) => {
+  const networkId = findNetworkId(name, appState)
+  if (networkId) {
+    return { networkId, appState }
+  }
+  const networks = await getNetworks()
+  const appStateWithNewNetworks = { ...appState, networks }
+  const newNetworkId = findNetworkId(name, appStateWithNewNetworks)
+  return { networkId: newNetworkId, appState: appStateWithNewNetworks }
 }
 
 const appStateMapperFactories = {
   lifecycle: event => async appState => {
-    const { name, message } = event
+    const { name, message, domainOrNetwork } = event
     const [, state, , stateReason] = message.match(/^([^ ]+)( (.+)?)?/)
-    const { id, appState: newAppState } = await getIdFromName(name, appState)
-    return compose(
-      set(lensPath(['domains', id, 'state']), mapState(toLowerCase(state))),
-      set(lensPath(['domains', id, 'stateReason']), toLowerCase(stateReason))
-    )(newAppState)
+    if (domainOrNetwork === 'domain') {
+      const { domainId, appState: newAppState } = await getDomainIdFromName(
+        name,
+        appState
+      )
+      return compose(
+        set(
+          lensPath(['domains', domainId, 'state']),
+          mapState(toLowerCase(state))
+        ),
+        set(
+          lensPath(['domains', domainId, 'stateReason']),
+          toLowerCase(stateReason)
+        )
+      )(newAppState)
+    }
+
+    if (domainOrNetwork === 'network') {
+      const { networkId, appState: newAppState } = await getNetworkIdFromName(
+        name,
+        appState
+      )
+      return compose(
+        set(
+          lensPath(['networks', networkId, 'state']),
+          mapState(toLowerCase(state))
+        )
+      )(newAppState)
+    }
+
+    throw new Error(
+      `Unknown domainOrNetwork: ${JSON.stringify(domainOrNetwork)}`
+    )
   },
 }
 
@@ -41,7 +94,8 @@ const eventToAppStateMapper = event =>
 
 const initAppState = async () => {
   const domains = await getDomains()
-  const initialAppState = { domains }
+  const networks = await getNetworks()
+  const initialAppState = { domains, networks }
   const appStateSubject = new BehaviorSubject(initialAppState)
 
   getEventObservable()

@@ -1,10 +1,10 @@
 import wrapInErrorHandler from '../../../_wrap-in-error-handler'
-import { shutdownDomain } from '../../../../server/virsh'
+import { startNetwork } from '../../../../server/virsh'
 import s from '../../../../fn/s'
 import { selfLink } from '.'
 
 export const post = wrapInErrorHandler((req, res, next) => {
-  shutdownDomain(req.domain.id).then(
+  startNetwork(req.network.id).then(
     message =>
       res
         .status(202)
@@ -12,7 +12,7 @@ export const post = wrapInErrorHandler((req, res, next) => {
         .send(
           s({
             _links: {
-              self: `${selfLink(req)}/stop`,
+              self: `${selfLink(req)}/start`,
               parent: selfLink(req),
             },
             message,

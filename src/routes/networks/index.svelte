@@ -2,10 +2,10 @@
   import { json, normalize } from '../../fn/normalize-response'
 
   export async function preload(page, session) {
-    const _domains = await this.fetch(`/api/domains`)
+    const _networks = await this.fetch(`/api/networks`)
       .then(json)
       .then(normalize(this.fetch))
-    return { _domains }
+    return { _networks }
   }
 </script>
 
@@ -14,16 +14,16 @@
   import { onMount } from 'svelte'
   import { arrayifyCollection } from '../../fn/normalize-response'
 
-  export let _domains
-  let domain
-  $: domain = arrayifyCollection(_domains)
+  export let _networks
+  let network
+  $: network = arrayifyCollection(_networks)
 
   onMount(() => {
     const ws = new ReconnectingWebSocket(
-      window.location.origin.replace(/^http/, 'ws') + '/api/domains'
+      window.location.origin.replace(/^http/, 'ws') + '/api/networks'
     )
     ws.addEventListener('message', async event => {
-      _domains = await Promise.resolve(event.data)
+      _networks = await Promise.resolve(event.data)
         .then(JSON.parse)
         .then(normalize(fetch))
     })
@@ -32,17 +32,17 @@
 </script>
 
 <svelte:head>
-  <title>/domains</title>
+  <title>/networks</title>
 </svelte:head>
 
-<h1>/domains</h1>
+<h1>/networks</h1>
 <p><a href="/">&lt;-- back</a></p>
 
 <table>
-  {#each domain as domain}
+  {#each network as network}
     <tr>
-      <td><a href={`/domains/${domain.id}`}>{domain.name}</a></td>
-      <td><a href={`/domains/${domain.id}`}>( {domain.state} )</a></td>
+      <td><a href={`/networks/${network.id}`}>{network.name}</a></td>
+      <td><a href={`/networks/${network.id}`}>( {network.state} )</a></td>
     </tr>
   {/each}
 </table>

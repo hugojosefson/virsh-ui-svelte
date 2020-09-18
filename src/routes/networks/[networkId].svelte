@@ -2,11 +2,11 @@
   import { json, normalize } from '../../fn/normalize-response'
 
   export async function preload(page, session) {
-    const { domainId } = page.params
-    const url = `/api/domains/${domainId}`
-    const domain = await this.fetch(url).then(json).then(normalize(this.fetch))
+    const { networkId } = page.params
+    const url = `/api/networks/${networkId}`
+    const network = await this.fetch(url).then(json).then(normalize(this.fetch))
 
-    return { domain }
+    return { network }
   }
 </script>
 
@@ -16,14 +16,14 @@
   import s from '../../fn/s'
   import Action from '../../components/action.svelte'
 
-  export let domain
+  export let network
   onMount(() => {
     const ws = new ReconnectingWebSocket(
       window.location.origin.replace(/^http/, 'ws') +
-        `/api/domains/${domain.id}`
+        `/api/networks/${network.id}`
     )
     ws.addEventListener('message', async event => {
-      domain = await Promise.resolve(event.data)
+      network = await Promise.resolve(event.data)
         .then(JSON.parse)
         .then(normalize(fetch))
       handleActionResult()
@@ -38,17 +38,17 @@
 </script>
 
 <svelte:head>
-  <title>{domain.name}</title>
+  <title>{network.name}</title>
 </svelte:head>
 
-<p><a href="/domains">&lt;-- back</a></p>
+<p><a href="/networks">&lt;-- back</a></p>
 
-<h1>/domains/{domain.name}</h1>
+<h1>/networks/{network.name}</h1>
 
-<p>Domain {domain.name || domain.id} is {domain.state}.</p>
+<p>Network {network.name || network.id} is {network.state}.</p>
 
 <p>
-  {#each domain._links as link}
+  {#each network._links as link}
     {#each link.actions as action}
       <Action on:result={handleActionResult} {link} {action} />
     {/each}
@@ -57,7 +57,7 @@
 
 {#if actionResult.message}
   <p>
-    {actionResult.message.replace(domain.id, domain.name)}{`${/\.$/.test(actionResult.message) ? '' : '.'}`}
+    {actionResult.message.replace(network.id, network.name)}{`${/\.$/.test(actionResult.message) ? '' : '.'}`}
   </p>
 {/if}
 
