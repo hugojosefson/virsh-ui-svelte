@@ -2,7 +2,7 @@
   "name": "@hugojosefson/virsh-ui-svelte",
   "private": true,
   "description": "Web app for managing virtual machines.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "dev": "PORT=$(get-port $(seq 3000 3100)) sapper dev",
     "build": "sapper build --legacy",
