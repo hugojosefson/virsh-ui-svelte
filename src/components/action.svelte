@@ -6,6 +6,8 @@
     const lc = rel.toLowerCase()
     return {
       start: 'play',
+      resume: 'play',
+      pause: 'pause',
       stop: 'square',
     }[lc]
   }

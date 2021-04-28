@@ -130,6 +130,8 @@ export const mapState = state =>
     running: 'on',
     resumed: 'on',
     started: 'on',
+    paused: 'paused',
+    suspended: 'paused',
     yes: 'on',
     no: 'off',
     destroyed: 'off',
@@ -152,6 +154,8 @@ export const getNetworkState = network =>
   virsh('net-info', network).then(toLowerCase).then(mapNetworkState)
 
 export const startDomain = domain => virsh('start', domain)
+export const resumeDomain = domain => virsh('resume', domain)
+export const pauseDomain = domain => virsh('suspend', domain)
 export const shutdownDomain = domain =>
   virsh('shutdown', domain, '--mode', 'agent,acpi')
 
